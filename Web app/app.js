@@ -1,7 +1,7 @@
 
 window.onload = myOnLoad;
 
-var story = []; 
+var story = [];
 
 const Url = 'https://jsonplaceholder.typicode.com/posts';
 const Data = {
@@ -21,17 +21,22 @@ const otherPram = {
 
 function myOnLoad() {
 
+    makeStartButton();
+
+
+}
+function makeStartButton() {
     // make first button
     console.log("Script loaded");
     var buttonLine = document.getElementById("buttonDiv");
     var startBtn = document.createElement("button");
     startBtn.id = "StartButton";
-    startBtn.innerHTML = "<h1> Start making your own story </h1>";
+    startBtn.innerHTML = "Start Making a New Story";
+    startBtn.className = "button";
     startBtn.addEventListener("click", startBtnClick);
     buttonLine.appendChild(startBtn);
 
 }
-
 
 function startBtnClick() {
 
@@ -39,17 +44,21 @@ function startBtnClick() {
     console.log("Start button clicked");
     console.log("Needs to make a request to the ML to get a prompt and options.");
 
-    var prompt = "PROMPT";
+
     // remove the start button
     var buttonLine = document.getElementById("buttonDiv");
-    var btn = event.currentTarget;
-    buttonLine.removeChild(btn);
+    // var btn = event.currentTarget;
+    removeAllChildNodes(buttonLine);
+    // buttonLine.removeChild(btn);
 
+    sendOptionSelection("START","");
+    //display prompt
+    // var prompt = "PROMPT";
+    // setPrompt(prompt);
 
-    options = ["Help", "Run", "Walk", "Talk"];
-
-
-    generateNewButtons(options);
+    // //display button options
+    // options = ["Help", "Run", "Walk", "Talk"];
+    // generateNewButtons(options);
 }
 function generateNewButtons(options) {
 
@@ -59,6 +68,7 @@ function generateNewButtons(options) {
         var btn = document.createElement("button");
         btn.id = "OptionButton" + i.toString();
         btn.innerHTML = options[i].toString();
+        btn.className = "button";
         btn.addEventListener("click", function () {
             optionSelection(i);
         });
@@ -68,6 +78,7 @@ function generateNewButtons(options) {
     var endBtn = document.createElement("button");
     endBtn.id = "EndButton";
     endBtn.innerHTML = "The End.";
+    endBtn.className = "button";
     endBtn.addEventListener("click", function () {
         endButtonClick();
     })
@@ -80,56 +91,77 @@ function removeAllChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
+
 function endButtonClick() {
     console.log("End button clicked");
     var buttonLine = document.getElementById("buttonDiv");
+    removeAllChildNodes(document.getElementById("promptBox"));
     removeAllChildNodes(buttonLine);
     console.log("removed buttons");
+
+
+    // create the export button and the start button
+    makeStartButton();
+    // make the export button;
+    var exportBtn = document.createElement("button");
+    exportBtn.id = "ExportButton";
+    exportBtn.innerHTML = "Export";
+    exportBtn.className = "button";
+    exportBtn.addEventListener("click", exportStory);
+    buttonLine.appendChild(exportBtn);
+
 }
 
 function optionSelection(x) {
     var btn = event.currentTarget;
     var option = btn.innerHTML;
+    var pText = document.getElementById("promptText");
+    var prompt = pText.innerHTML;
     console.log("Selection : " + option);
     removeAllChildNodes(document.getElementById("buttonDiv"));
-    sendOptionSelection(option);
+    removeAllChildNodes(document.getElementById("promptBox"));
+    sendOptionSelection(prompt, option);
 
-    
 }
 
-function sendOptionSelection(prompt,option) {
+function sendOptionSelection(prompt, option) {
 
-    AddOptionToStory(prompt,option);
+    AddToStory(prompt, option);
 
 
     console.log("sending: " + option);
-    var newUrl = Url ;/// + "/" + option.toString();
+    var newUrl = Url;/// + "/" + option.toString();
 
     fetch(newUrl)
-        .then(data => { 
+        .then(data => {
             return data.json()
-         })
-        .then(res => { 
+        })
+        .then(res => {
 
-            var i = Math.floor((Math.random() * 100) + 0); 
+            var i = Math.floor((Math.random() * 100) + 0);
+            var j = Math.floor((Math.random() * 100) + 0);
+
             var words = res[i].title;
-            console.log(words);
             words = words.split(' ');
-            console.log(words);
-            
+            setPrompt(res[j].title + " _______ ");
             generateNewButtons(words);
-            
+
         })
         .catch(error => console.log(error))
 
-
-
-
+}
+function setPrompt(prompt) {
+    var promptLine = document.getElementById("promptBox");
+    var text = document.createElement("p");
+    text.innerHTML = prompt;
+    text.id = "promptText";
+    promptLine.appendChild(text);
 }
 
-function AddOptionToStory(prompt,option){
-    story.push( prompt + " " + option);
+function AddToStory(prompt, option) {
+    story.push(prompt + " " + option);
 }
-function exportStory(){
-    
+function exportStory() {
+
+    console.log(story);
 }
