@@ -36,39 +36,44 @@ function myOnLoad() {
 function sendOptionSelection(prompt, option) {
 
     //add last prompt option pair to the list that is the story. 
+    console.log(prompt, option);
     AddToStory(prompt, option);
 
+    var d = prompt.split(" ");
+    var p = ""
+    for (var i = 0; i < d.length; i++) {
+        p += d[i] + "/"
+    }
+    var newUrl = Url + "/story/" + p + option;/// + "/" + option.toString();
     var newUrl = Url + "/story";/// + "/" + option.toString();
 
-
-    // old
-    // fetch(newUrl)
-    //     .then(data => {
-    //         return data.json()
-    //     })
-    //     .then(res => {
-
-    //         var i = Math.floor((Math.random() * 100) + 0);
-    //         var j = Math.floor((Math.random() * 100) + 0);
-
-    //         var words = res[i].title;
-    //         words = words.split(' ');
-    //         setPrompt(res[j].title + " _______ ");
-    //         generateNewButtons(words);
-
-    //     })
-    //     .catch(error => console.log(error))
+    
+    var postData = {
+        "m_prompt": prompt,
+        "m_option": option
+    };
 
     // new attempt
     fetch(newUrl, {
-        method: "post",
+        method: "POST",
+        dataType: 'text',
+        // "content-type": "application/json; charset=utf-8",
         headers: {
+            "Content-Type": "application/json"
         },
         //make sure to serialize your JSON body
-        body: JSON.stringify({
-            m_prompt: prompt,
-            m_option: option
-        })
+        // body: prompt+":" +option
+
+        // JSON.stringify({
+        //     m_prompt: prompt,
+        //     m_option: option
+        // })
+        // body: {
+        //     m_prompt: prompt,
+        //     m_option: option
+        // }
+        body: JSON.stringify(postData)
+
     })
         .then(data => {
             //do something awesome that makes the world a better place
@@ -86,6 +91,32 @@ function sendOptionSelection(prompt, option) {
         .catch(error =>
             console.log(error)
         );
+
+    // GET REQUEST ATTEMPT
+    // // new attempt
+    // fetch(newUrl, {
+    //     method: "get",
+    //     dataType: 'text',
+    //     "content-type": "application/json; charset=utf-8",
+
+    // })
+    //     .then(data => {
+    //         //do something awesome that makes the world a better place
+    //         return data.json()
+    //     })
+    //     .then(res => {
+    //         console.log(res);
+    //         var prom = res.m_p;
+    //         var ops = res.m_o;
+    //         console.log("Recieved Options:" + ops);
+    //         ops = ops.split(" "); // spliting. might change. 
+    //         setPrompt(prom);
+    //         generateNewButtons(ops);
+    //     })
+    //     .catch(error =>
+    //         console.log(error)
+    //     );
+
 
 }
 
