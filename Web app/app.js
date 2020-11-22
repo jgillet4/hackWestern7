@@ -122,6 +122,7 @@ function setPrompt(prompt) {
     var text = document.createElement("p");
     text.innerHTML = prompt;
     text.id = "promptText";
+    text.className= "text";
     promptLine.appendChild(text);
 }
 
@@ -154,7 +155,15 @@ function AddToStory(prompt, option) {
 }
 function exportStory() {
 
-    console.log(story);
+    var storyDisplay = document.getElementById("storyBox");
+    var storyText = document.createElement("p");
+    for(var i= 0; i<story.length; i ++)
+    {
+        storyText.innerHTML += story[i].text + ". ";
+    }  
+    storyText.id = "storyText";
+    storyText.className= "text";
+    storyDisplay.appendChild(storyText);
 
 
     // Data which will write in a file. 
