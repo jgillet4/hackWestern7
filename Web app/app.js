@@ -38,7 +38,8 @@ function sendOptionSelection(prompt, option) {
     //add last prompt option pair to the list that is the story. 
     AddToStory(prompt, option);
 
-    var newUrl = Url;/// + "/" + option.toString();
+    var newUrl = Url + "/story";/// + "/" + option.toString();
+
 
     // old
     // fetch(newUrl)
@@ -168,16 +169,6 @@ function exportStory() {
     // })
 }
 
-
-
-
-
-
-
-
-
-
-
 // button clicks 
 function startBtnClick() {
 
@@ -192,7 +183,7 @@ function startBtnClick() {
     removeAllChildNodes(buttonLine);
     // buttonLine.removeChild(btn);
 
-    sendOptionSelection("START", "");
+    sendOptionSelection("START", "START");
     //display prompt
     // var prompt = "PROMPT";
     // setPrompt(prompt);
