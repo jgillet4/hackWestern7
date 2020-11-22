@@ -1,12 +1,17 @@
 
-window.onload = myOnLoad;
+
 
 var story = [];
+// const fs = require('fs');
+const host = '127.0.0.1';
+const port = "8000";
 
-const Url = 'https://jsonplaceholder.typicode.com/posts';
+// const Url = 'https://jsonplaceholder.typicode.com/posts';
+const Url = 'http://' + host + ":" + port;
+
+
 const Data = {
-    name: "Said",
-    id: 23
+
 };
 //optional parameters
 const otherPram = {
@@ -18,6 +23,7 @@ const otherPram = {
 
 };
 
+window.onload = myOnLoad;
 
 function myOnLoad() {
 
@@ -25,41 +31,66 @@ function myOnLoad() {
 
 
 }
-function makeStartButton() {
-    // make first button
-    console.log("Script loaded");
-    var buttonLine = document.getElementById("buttonDiv");
-    var startBtn = document.createElement("button");
-    startBtn.id = "StartButton";
-    startBtn.innerHTML = "Start Making a New Story";
-    startBtn.className = "button";
-    startBtn.addEventListener("click", startBtnClick);
-    buttonLine.appendChild(startBtn);
+// http request to api
+
+function sendOptionSelection(prompt, option) {
+
+    //add last prompt option pair to the list that is the story. 
+    AddToStory(prompt, option);
+
+    var newUrl = Url;/// + "/" + option.toString();
+
+    // old
+    // fetch(newUrl)
+    //     .then(data => {
+    //         return data.json()
+    //     })
+    //     .then(res => {
+
+    //         var i = Math.floor((Math.random() * 100) + 0);
+    //         var j = Math.floor((Math.random() * 100) + 0);
+
+    //         var words = res[i].title;
+    //         words = words.split(' ');
+    //         setPrompt(res[j].title + " _______ ");
+    //         generateNewButtons(words);
+
+    //     })
+    //     .catch(error => console.log(error))
+
+    // new attempt
+    fetch(newUrl, {
+        method: "post",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+            m_prompt: prompt,
+            m_option: option
+        })
+    })
+        .then(data => {
+            //do something awesome that makes the world a better place
+            return data.json()
+        })
+        .then(res => {
+            var prom = data.m_prompt;
+            var ops = data.m_option;
+            console.log("Recieved Options:" + ops);
+            ops = ops.split(" "); // spliting. might change. 
+            setPrompt(prom);
+            generateNewButtons(ops);
+        })
+        .catch(error =>
+            console.log(error)
+        );
 
 }
 
-function startBtnClick() {
 
-    story = []
-    console.log("Start button clicked");
-    console.log("Needs to make a request to the ML to get a prompt and options.");
-
-
-    // remove the start button
-    var buttonLine = document.getElementById("buttonDiv");
-    // var btn = event.currentTarget;
-    removeAllChildNodes(buttonLine);
-    // buttonLine.removeChild(btn);
-
-    sendOptionSelection("START","");
-    //display prompt
-    // var prompt = "PROMPT";
-    // setPrompt(prompt);
-
-    // //display button options
-    // options = ["Help", "Run", "Walk", "Talk"];
-    // generateNewButtons(options);
-}
+// setting UI element data
 function generateNewButtons(options) {
 
     var buttonLine = document.getElementById("buttonDiv");
@@ -86,10 +117,89 @@ function generateNewButtons(options) {
 
 
 }
+function setPrompt(prompt) {
+    var promptLine = document.getElementById("promptBox");
+    var text = document.createElement("p");
+    text.innerHTML = prompt;
+    text.id = "promptText";
+    promptLine.appendChild(text);
+}
+
+// helpers or something
+function makeStartButton() {
+    // make first button
+    console.log("Script loaded");
+    var buttonLine = document.getElementById("buttonDiv");
+    var startBtn = document.createElement("button");
+    startBtn.id = "StartButton";
+    startBtn.innerHTML = "Start Making a New Story";
+    startBtn.className = "button";
+    startBtn.addEventListener("click", startBtnClick);
+    buttonLine.appendChild(startBtn);
+
+}
 function removeAllChildNodes(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
     }
+}
+function AddToStory(prompt, option) {
+
+
+    var i = null;
+    var t = prompt + " " + option;
+    var p = { text: t, image: i }
+
+    story.push(p);//prompt + " " + option);
+}
+function exportStory() {
+
+    console.log(story);
+
+
+    // Data which will write in a file. 
+    // let data = "Learning how to write in a file."
+
+    // // Write data in 'Output.txt' . 
+    // fs.writeFile('Output.txt', data, (err) => {
+
+    //     // In case of a error throw err. 
+    //     if (err) throw err;
+    // })
+}
+
+
+
+
+
+
+
+
+
+
+
+// button clicks 
+function startBtnClick() {
+
+    story = []
+    console.log("Start button clicked");
+    console.log("Needs to make a request to the ML to get a prompt and options.");
+
+
+    // remove the start button
+    var buttonLine = document.getElementById("buttonDiv");
+    // var btn = event.currentTarget;
+    removeAllChildNodes(buttonLine);
+    // buttonLine.removeChild(btn);
+
+    sendOptionSelection("START", "");
+    //display prompt
+    // var prompt = "PROMPT";
+    // setPrompt(prompt);
+
+    // //display button options
+    // options = ["Help", "Run", "Walk", "Talk"];
+    // generateNewButtons(options);
 }
 
 function endButtonClick() {
@@ -124,44 +234,29 @@ function optionSelection(x) {
 
 }
 
-function sendOptionSelection(prompt, option) {
-
-    AddToStory(prompt, option);
 
 
-    console.log("sending: " + option);
-    var newUrl = Url;/// + "/" + option.toString();
 
-    fetch(newUrl)
-        .then(data => {
-            return data.json()
-        })
-        .then(res => {
 
-            var i = Math.floor((Math.random() * 100) + 0);
-            var j = Math.floor((Math.random() * 100) + 0);
+// from another project
+function saveFileClick() {
 
-            var words = res[i].title;
-            words = words.split(' ');
-            setPrompt(res[j].title + " _______ ");
-            generateNewButtons(words);
+    console.log("save");
+    //get the shape container;
+    var jsonArrData = JSON.stringify(shpCon, null, 2);
+    console.log(jsonArrData);
+    var fn = document.getElementById("browse").value;
+    console.log(fn);
+    fn = fn.toString().trim();
+    fn += ".json";
+    var a = document.createElement("a");
 
-        })
-        .catch(error => console.log(error))
+    a.href = URL.createObjectURL(new Blob([jsonArrData],
+        { type: "application/json" }));
 
-}
-function setPrompt(prompt) {
-    var promptLine = document.getElementById("promptBox");
-    var text = document.createElement("p");
-    text.innerHTML = prompt;
-    text.id = "promptText";
-    promptLine.appendChild(text);
-}
-
-function AddToStory(prompt, option) {
-    story.push(prompt + " " + option);
-}
-function exportStory() {
-
-    console.log(story);
+    a.setAttribute("download", fn);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    removeButtons();
 }
