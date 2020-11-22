@@ -63,9 +63,6 @@ function sendOptionSelection(prompt, option) {
     fetch(newUrl, {
         method: "post",
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin':"*"
         },
         //make sure to serialize your JSON body
         body: JSON.stringify({
@@ -78,8 +75,9 @@ function sendOptionSelection(prompt, option) {
             return data.json()
         })
         .then(res => {
-            var prom = data.m_prompt;
-            var ops = data.m_option;
+            console.log(res);
+            var prom = res.m_p;
+            var ops = res.m_o;
             console.log("Recieved Options:" + ops);
             ops = ops.split(" "); // spliting. might change. 
             setPrompt(prom);
