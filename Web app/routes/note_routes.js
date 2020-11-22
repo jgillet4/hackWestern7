@@ -41,26 +41,26 @@ module.exports = function (app, db) {
         //     }
         //     );
 
-        requestify.post('https://us-central1-calcium-centaur-296316.cloudfunctions.net/getModelPredictions', {
-            x : postData 
-        })
-            .then(function (response) {
-                // Get the response body
-                console.log("Int POST request");
-                var d = JSON.parse(response.body);
-                console.log(d)
+        // requestify.post('https://us-central1-calcium-centaur-296316.cloudfunctions.net/getModelPredictions', {
+        //     x : postData 
+        // })
+        //     .then(function (response) {
+        //         // Get the response body
+        //         console.log("Int POST request");
+        //         var d = JSON.parse(response.body);
+        //         console.log(d)
                 
-            }).catch(error =>{
-                console.los("<<<<<<<<<<<<<ERROR>>>>>>>>>>");
-                console.log(error);
-            }
-            );
+        //     }).catch(error =>{
+        //         console.los("<<<<<<<<<<<<<ERROR>>>>>>>>>>");
+        //         console.log(error);
+        //     }
+        //     );
 
-        //// SENDING 
-        // var data = {
-        //     m_p: "don't hug me i'm scared",
-        //     m_o: "Please leave princess mario"
-        // }
-        // res.send(JSON.stringify(data));
+        // SENDING 
+        var data = {
+            m_p: "hello world!",
+            m_o: "I am a demo"
+        }
+        res.send(JSON.stringify(data));
     });
 };
