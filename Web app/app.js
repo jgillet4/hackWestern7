@@ -65,7 +65,7 @@ function sendOptionSelection(prompt, option) {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Access-Controll-Allow-Header':"*"
+            'Access-Control-Allow-Origin':"*"
         },
         //make sure to serialize your JSON body
         body: JSON.stringify({
